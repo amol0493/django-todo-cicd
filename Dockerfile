@@ -1,8 +1,8 @@
-FROM python:3
+FROM python:3.9-slim-buster
 
 WORKDIR /data
 
-RUN pip install django==3.2
+RUN pip install django==4.0
 
 COPY . .
 
