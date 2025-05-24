@@ -25,7 +25,7 @@ SECRET_KEY = '8)810zj@#^2xp=1=2rkozbv8#)gub6m1a^9qf&)d-9&x9*c2a_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*'] # This allows all hosts, useful for development in Docker
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Add any other third-party apps here if you use them, e.g., 'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -81,6 +82,16 @@ DATABASES = {
     }
 }
 
+# In a Docker setup, you might want to switch to PostgreSQL or MySQL.
+# Here's an example using environment variables for a PostgreSQL database
+# It assumes you're using a package like 'psycopg2-binary' and a utility like 'dj-database-url'
+# to parse the DATABASE_URL environment variable.
+# Example:
+# import dj_database_url
+# DATABASE_URL = os.environ.get('DATABASE_URL')
+# if DATABASE_URL:
+#     DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -110,7 +121,7 @@ TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = True # Deprecated in Django 4.0+, but fine for Django 2.2.7
 
 USE_TZ = True
 
@@ -121,9 +132,18 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT is where collectstatic will gather all static files for deployment
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected') # Changed name for clarity
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'staticfiles'),
-)
+# STATICFILES_DIRS is where Django will look for static files during development
+# (in addition to static/ subdirectories in your app directories)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'staticfiles'), # This typically points to a common static folder
+]
+
+# --- IMPORTANT CHANGE FOR THE WARNING ---
+# Configure default primary key field type
+# This resolves the models.W042 warning.
+# BigAutoField is recommended for new projects.
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
